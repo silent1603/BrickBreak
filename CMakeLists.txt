@@ -1,125 +1,179 @@
-cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
+﻿cmake_minimum_required(VERSION 3.22)
 
-project(BrickBreak LANGUAGES C CXX)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_EXPORT_COMPILE_COMMANDS True)
-add_library(brickbreak_compiler_flags INTERFACE)
-target_compile_features(brickbreak_compiler_flags
-                        INTERFACE cxx_std_17)
-option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
+project(GAME CXX)
 
-include(Dependencies.cmake)
-brickbreak_setup_dependencies()
+set(CMAKE_CXX_STANDARD 17)
 
-set(gcc_like_cxx "$<COMPILE_LANG_AND_ID:CXX,ARMClang,AppleClang,Clang,GNU,LCC>")
-set(msvc_cxx "$<COMPILE_LANG_AND_ID:CXX,MSVC>")
-target_compile_options(
-  brickbreak_compiler_flags
-  INTERFACE
-    "$<${gcc_like_cxx}:$<BUILD_INTERFACE:-pedantic-errors;-Werror;-Wall;-Weffc++;-Wextra;-Wconversion;-Wsign-conversion>>"
-    "$<${msvc_cxx}:$<BUILD_INTERFACE:-W4>>")
+##########################################################################################
+# project settings
+##########################################################################################
 
-include(cmake/StaticAnalysers.cmake)
-enable_clang_tidy()
+option(BUILD_TESTING "Build tests" ON)
 
-# The configurations we support
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release;Distribution")
+#####################################
+# Copy Exe and dll , lib  to bin
+#####################################
+set(COMMON_EXPORT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/release")
 
-# if(MSVC) # 64 bit architecture set(CMAKE_VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE
-# "x64")
-#
-# # Set runtime library if(USE_STATIC_MSVC_RUNTIME_LIBRARY)
-# set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>") else()
-# set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
-# endif()
-#
-# # Set general compiler flags set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}
-# /Zc:__cplusplus /Gm- /Wall /WX /MP /nologo /diagnostics:classic /FC
-# /fp:except- /Zc:inline" )
-#
-# # Optionally generate debug symbols if(GENERATE_DEBUG_SYMBOLS)
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zi") endif()
-#
-# # Remove any existing compiler flag that enables RTTI string(REPLACE "/GR" ""
-# CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-#
-# # Set compiler flag for disabling RTTI set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}
-# /GR-")
-#
-# if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "ARM") # On ARM the exception handling
-# flag is missing which causes warnings set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}
-# /EHsc") endif()
-#
-# # Set compiler flags for various configurations set(CMAKE_CXX_FLAGS_DEBUG "/GS
-# /Od /Ob0 /RTC1") set(CMAKE_CXX_FLAGS_RELEASE "/GS- /Gy /O2 /Oi /Ot")
-# set(CMAKE_CXX_FLAGS_DISTRIBUTION "/GS- /Gy /O2 /Oi /Ot")
-#
-# # Set linker flags if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-# if(CROSS_PLATFORM_DETERMINISTIC) set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}
-# /fp:precise") else() set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:fast") #
-# Clang doesn't use # fast math because it # cannot be turned off # inside a
-# single # compilation unit endif() elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL
-# "Clang") set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /showFilenames")
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Qunused-arguments") # Clang emits #
-# warnings # about unused # arguments # such as /MP # and /GL endif() else() #
-# Set general compiler flags set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall
-# -Werror")
-#
-# # Optionally generate debug symbols if(GENERATE_DEBUG_SYMBOLS)
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g") endif()
-#
-# if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU") # Also disable
-# -Wstringop-overflow or it will generate false positives that # can't be
-# disabled from code when link-time optimizations are enabled Also # turn off
-# automatic fused multiply add contractions, there doesn't seem to # be a way to
-# do this selectively through the macro JPH_PRECISE_MATH_OFF set(CMAKE_CXX_FLAGS
-# "${CMAKE_CXX_FLAGS} -Wno-stringop-overflow -ffp-contract=off") else() # Do not
-# use -ffast-math since it cannot be turned off in a single # compilation unit
-# under clang, see Core.h set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}
-# -ffp-model=precise")
-#
-# # On clang 14 and later we can turn off float contraction through a pragma, #
-# older versions and deterministic versions need it off always, see Core.h
-# if(CMAKE_CXX_COMPILER_VERSION LESS 14 OR CROSS_PLATFORM_DETERMINISTIC)
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffp-contract=off") endif() endif()
-#
-# # Set compiler flags for various configurations set(CMAKE_CXX_FLAGS_DEBUG "")
-# set(CMAKE_CXX_FLAGS_RELEASE "-O3") set(CMAKE_CXX_FLAGS_DISTRIBUTION "-O3")
-#
-# # Set linker flags if(NOT ("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows"))
-# set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread") endif()
-# endif()
+set(CMAKE_VS_DEBUGGER_WORKING_DIRECTORY "${COMMON_EXPORT_PATH}")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "$<0:>${COMMON_EXPORT_PATH}") # .exe and .dll
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "$<0:>${COMMON_EXPORT_PATH}") # .so and .dylib
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "$<0:>${COMMON_EXPORT_PATH}") # .lib and .a
 
-# Set linker flags
-set(CMAKE_EXE_LINKER_FLAGS_DISTRIBUTION "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
 
-# Enable link time optimization in Release and Distribution mode if requested
-# and available
-set_interprocedural_optimization()
+##########################################################################################
+# pre lib include settings
+##########################################################################################
 
-# Compile the HelloWorld application
-add_executable(BrickBreak src/main.cpp src/game/game.cpp
-                                             src/physics.cpp src/systems.cpp)
-target_include_directories(BrickBreak
-                           PRIVATE ${JoltPhysics_SOURCE_DIR}/..)
-target_include_directories(BrickBreak
-                           PUBLIC "${PROJECT_SOURCE_DIR}/src")
-target_link_libraries(
-  BrickBreak
-  PRIVATE Jolt
-          flecs::flecs_static
-          fmt
-          imgui
-          raylib
-          rlimgui
-          spdlog::spdlog_header_only
-          brickbreak_compiler_flags)
-target_compile_definitions(BrickBreak
-                           PRIVATE SPDLOG_FMT_EXTERNAL)
-target_compile_definitions(
-  BrickBreak
-  PUBLIC ASSETS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/")
+# this is here to ensure the runtime is linked staticly for msvc
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}  /MT ")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_RELEASE}  /MTd ")
+endif()
 
-# Make this project the startup project
-set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT
-                                "BrickBreak")
+if (NOT DEFINED PLATFORM)
+    set(PLATFORM "default")
+endif()
+
+
+foreach(CONFIG ${CMAKE_CONFIGURATION_TYPES})
+    string(TOUPPER ${CONFIG} CONFIG_UPPER)
+    set(CMAKE_${CONFIG_UPPER}_POSTFIX "_${CONFIG_UPPER}") 
+endforeach()
+
+##########################################################################################
+# Add dependencies with FetchContent
+##########################################################################################
+
+# libraries array to be linked
+set(LIBRARIES "")
+set(LIBRARIES_FOR_TEST "")
+
+include(InstallRequiredSystemLibraries)
+include(FetchContent)
+include("cmake/utils.cmake")
+include("cmake/dependencies.cmake")
+
+
+
+##########################################################################################
+# Project executable setup
+##########################################################################################
+
+# Define PROJECT_INCLUDE to be the path to the include directory of the project
+set(PROJECT_INCLUDE "${CMAKE_CURRENT_LIST_DIR}/sources/")
+
+# Adding our source files
+# Define PROJECT_SOURCES as a list of all source files
+file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/sources/*.cpp" "${CMAKE_CURRENT_LIST_DIR}/sources/*.h")
+file(GLOB_RECURSE PROJECT_RESOURCES CONFIGURE_DEPENDS resources/*.*)
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${PROJECT_SOURCES})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${PROJECT_RESOURCES})
+
+# Declaring our executable
+add_executable(${PROJECT_NAME})
+target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCES} ${PROJECT_RESOURCES})
+target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INCLUDE})
+
+# Includes imgui source
+
+make_directory(../sources/imgui)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/sources/imgui 
+    ${CMAKE_CURRENT_LIST_DIR}/libs/rapidjson/include 
+    ${CMAKE_CURRENT_LIST_DIR}/libs/raygui/src)
+
+
+# add target properties such as debug postfix and MSVC runtime
+
+set(CMAKE_VS_DEBUGGER_WORKING_DIRECTORY "${COMMON_EXPORT_PATH}")
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
+set_source_files_properties( ${PROJECT_RESOURCES} PROPERTIES HEADER_FILE_ONLY TRUE)
+
+##########################################################################################
+# compiler settings
+##########################################################################################
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++ -pthread")
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBRARIES} -static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic)
+        
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti")
+
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBRARIES} -static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic)
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBRARIES} -static-intel -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic)
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_link_libraries( ${PROJECT_NAME} PRIVATE ${LIBRARIES})
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ENTRY:mainCRTStartup") 
+    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /SUBSYSTEM:CONSOLE")
+    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /SUBSYSTEM:WINDOWS") 
+else()
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBRARIES})
+endif()
+
+
+
+##########################################################################################
+# custom commands
+##########################################################################################
+
+set(EXECUTABLES ${PROJECT_NAME} CACHE INTERNAL "" )
+
+if(BUILD_TESTING)
+  enable_testing()
+  add_subdirectory(tests)
+endif()
+
+add_subdirectory(examples)
+
+
+# copy assets over into the build dir for the executable to have them for debug/run reasons
+
+add_custom_target(copyAssetsOver 
+        COMMAND ${CMAKE_COMMAND} -E copy_directory 
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources 
+        ${COMMON_EXPORT_PATH}/resources 
+        COMMENT "Copying assets to build directory"
+)
+
+foreach(EXECUTABLE ${EXECUTABLES})
+  add_dependencies(${EXECUTABLE} copyAssetsOver) 
+endforeach()
+
+foreach(CONFIG ${CMAKE_CONFIGURATION_TYPES})
+    string(TOUPPER ${CONFIG} CONFIG_UPPER)
+    set_target_properties(${EXECUTABLES} ${LIBRARIES_FOR_TEST} PROPERTIES ${CONFIG_UPPER}_POSTFIX "${CMAKE_${CONFIG_UPPER}_POSTFIX}")
+endforeach()
+
+##########################################################################################
+# Project build settings
+##########################################################################################
+
+
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -DDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG")
+
+if(WIN32)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -mconsole")
+    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -mwindows")
+  endif()    
+endif()
+
+
+# Set common compiler flags
+# SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -Wswitch")
+# Set common compiler flags
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+
+
+# Ensure that hot-reload is enabled for VS
+if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /ZI")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SAFESEH:NO")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO")
+endif()
+
