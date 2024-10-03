@@ -1,6 +1,6 @@
 @echo off
 
-if exist "builds" (
+if exist "Builds" (
     echo Directory builds\ already exists.
 ) else (
     echo Creating builds directory...
@@ -8,6 +8,6 @@ if exist "builds" (
 )
 
 
-pushd builds
+pushd Builds
 cmake -G "Visual Studio 16 2019" -A x64 ..
 popd

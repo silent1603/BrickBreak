@@ -77,7 +77,7 @@ file(COPY ${files_to_copy} DESTINATION ${CMAKE_SOURCE_DIR}/sources/imgui)
 add_git_dependency(
     imgui
     https://github.com/ocornut/imgui.git
-    head
+    v1.91.2
 )
 
 file(REMOVE_RECURSE ${CMAKE_SOURCE_DIR}/libs/imgui/examples)
@@ -117,7 +117,7 @@ set(dep box2d)
 add_git_dependency(
     ${dep}
     https://github.com/erincatto/box2d.git
-    head
+    v3.0.0
 )
 
 # add the dependency here to be linked

@@ -37,6 +37,7 @@
 #include <math.h>
 #include <map>
 #include <limits>
+#include <cstdint>
 
 #ifndef NO_FONT_AWESOME
 #include "extras/FA6FreeSolidFontData.h"
@@ -86,12 +87,12 @@ void ReloadFonts(void)
     io.Fonts->TexID = fontTexture;
 }
 
-static const char* GetClipTextCallback(void*) 
+static const char* GetClipTextCallback(ImGuiContext*)
 {
     return GetClipboardText();
 }
 
-static void SetClipTextCallback(void*, const char* text)
+static void SetClipTextCallback(ImGuiContext*, const char* text)
 {
     SetClipboardText(text);
 }
@@ -289,10 +290,12 @@ void SetupBackend(void)
 
     io.MousePos = ImVec2(0, 0);
 
-    io.SetClipboardTextFn = SetClipTextCallback;
-    io.GetClipboardTextFn = GetClipTextCallback;
+    ImGuiPlatformIO& platformIO = ImGui::GetPlatformIO();
 
-    io.ClipboardUserData = nullptr;
+    platformIO.Platform_SetClipboardTextFn = SetClipTextCallback;
+    platformIO.Platform_GetClipboardTextFn = GetClipTextCallback;
+
+    platformIO.Platform_ClipboardUserData = nullptr;
 }
 
 void rlImGuiEndInitImGui(void)
@@ -640,7 +643,7 @@ bool ImGui_ImplRaylib_Init(void)
     return true;
 }
 
-void Imgui_ImplRaylib_BuildFontAtlas(void)
+void ImGui_ImplRaylib_BuildFontAtlas(void)
 {
     ReloadFonts();
 }
