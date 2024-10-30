@@ -19,7 +19,7 @@ public:
     inline std::size_t Count() const { return m_gameStateStack.size();}
     
     void ActiveState(uint16_t id);
-    void PushState(std::shared_ptr<GameState> state,bool active);
+    void PushState(std::shared_ptr<GameState> state);
     void Update(float fTimeElapsed);
     
     std::shared_ptr<GameState> PopState();

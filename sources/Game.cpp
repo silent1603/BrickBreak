@@ -26,7 +26,7 @@ void Game::Init()
     SetWindowIcon(icon); 
     std::shared_ptr<GameState> currentState = std::make_unique<GS_MainMenu>(0);
     gameManagerInfo.stateManager = std::make_unique<GameStateManager>(4);
-    gameManagerInfo.stateManager->PushState(currentState, true);
+    gameManagerInfo.stateManager->PushState(currentState);
 }
 
 void Game::CleanUp()

@@ -19,5 +19,8 @@ private:
     Rectangle m_startButtonRect;
     Rectangle m_settingsButtonRect;
     Rectangle m_exitButtonRect;
+
+    bool m_redirectToGamePlay;
+    bool m_redirectToSettings;
 };
 #endif

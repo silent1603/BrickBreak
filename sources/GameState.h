@@ -7,7 +7,7 @@
 class GameState
 {
 public:
-    GameState(uint16_t id,GameStateType type);
+    GameState(uint16_t id,GameStateType type,bool enable = true);
 	GameState(const GameState&) = delete;
 	GameState& operator=(const GameState&) = delete;
 
@@ -26,10 +26,12 @@ public:
     inline GameStateType Type() const { return m_type;}
 
     void AddLayer(std::shared_ptr<GameStateLayer> layer);
-
+    bool IsEnable() const { return m_enabled;}
+    void SetEnable(bool enable){m_enabled = enable;}
 protected:
     std::vector<std::shared_ptr<GameStateLayer>> m_layers;
     GameStateType m_type;
     uint16_t m_id;
+    bool m_enabled;
 };
 #endif

@@ -17,7 +17,7 @@ public:
     virtual bool Update(float fElapsedTime) = 0;
     virtual bool Render() = 0;
 
-private:
+protected:
     uint16_t m_id;
     bool m_enabled;
 };

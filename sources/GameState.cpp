@@ -1,6 +1,6 @@
 #include "GameState.h"
 
-GameState::GameState(uint16_t id,GameStateType type) : m_id(id), m_type(type) 
+GameState::GameState(uint16_t id,GameStateType type,bool enable) : m_id(id), m_type(type) ,m_enabled(enable)
 {
 
 }
@@ -20,19 +20,24 @@ void GameState::UpdateState(float fElapsedTime)
     std::vector<std::shared_ptr<GameStateLayer>>::reverse_iterator i = m_layers.rbegin();
     while (i != m_layers.rend())
     {
-        (*i)->Update(fElapsedTime);
+        if((*i)->IsEnable())
+        {
+            (*i)->Update(fElapsedTime);
+        }
         ++i;
     }
-    
 }
 
 void GameState::RenderState()
 {
-    std::vector<std::shared_ptr<GameStateLayer>>::reverse_iterator i =
-        m_layers.rbegin();
-    while (i != m_layers.rend())
+    std::vector<std::shared_ptr<GameStateLayer>>::iterator i =
+        m_layers.begin();
+    while (i != m_layers.end())
     {
-        (*i)->Render();
+        if((*i)->IsEnable())
+        {
+            (*i)->Render();
+        }
         ++i;
     }
 }

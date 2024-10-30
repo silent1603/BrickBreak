@@ -29,7 +29,7 @@ void GameStateManager::ActiveState(uint16_t id)
 	}
 }
 
-void GameStateManager::PushState(std::shared_ptr<GameState> state,bool active)
+void GameStateManager::PushState(std::shared_ptr<GameState> state)
 {
     if (m_gameStateStack.size() > 1)
     {
@@ -43,10 +43,8 @@ void GameStateManager::PushState(std::shared_ptr<GameState> state,bool active)
 		m_gameStateStack.emplace_back(state);
         state->StartState();
         state->ResumeState();
-        if(active)
-        {
-		    m_currentState = state.get();
-        }
+	    m_currentState = state.get();
+        
 	}
 }
 
@@ -81,8 +79,8 @@ std::shared_ptr<GameState> GameStateManager::GetStatebById(uint16_t id)
 
 void GameStateManager::Update(float fTimeElapsed)
 {
-    if(m_currentState)
+    if (m_currentState)
     {
-        m_currentState->UpdateState(fTimeElapsed);
+        m_currentState->UpdateState(fTimeElapsed)
     }
 }

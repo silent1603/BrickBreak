@@ -5,6 +5,7 @@ enum GameStateType
     NONE = 0,
     MAIN_MENU,
     SETTINGS,
-    GAME_PLAY
+    GAME_PLAY,
+    ENDGAME
 };
 #endif
