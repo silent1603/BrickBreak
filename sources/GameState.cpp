@@ -12,16 +12,27 @@ GameState::~GameState()
 
 void GameState::AddLayer(std::shared_ptr<GameStateLayer> layer)
 {
-    m_layers.emplace_back(layer);
+    m_layers.push_back(layer);
 }
 
 void GameState::UpdateState(float fElapsedTime)
 {
-    std::vector<std::shared_ptr<GameStateLayer>>::iterator i = m_layers.begin();
-    while (i != m_layers.end())
+    std::vector<std::shared_ptr<GameStateLayer>>::reverse_iterator i = m_layers.rbegin();
+    while (i != m_layers.rend())
     {
-        (*i)->update(fElapsedTime);
+        (*i)->Update(fElapsedTime);
         ++i;
     }
     
+}
+
+void GameState::RenderState()
+{
+    std::vector<std::shared_ptr<GameStateLayer>>::reverse_iterator i =
+        m_layers.rbegin();
+    while (i != m_layers.rend())
+    {
+        (*i)->Render();
+        ++i;
+    }
 }

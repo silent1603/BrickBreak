@@ -2,7 +2,7 @@
 #define GAME
 #include <memory>
 #include "GameStateManager.h"
-struct GameConfigInfo;
+
 class Game
 {
 public:
@@ -15,10 +15,8 @@ public:
     void Draw();
     bool Running() { return m_running;}
     void Quit() { m_running =false;}
-    GameConfigInfo LoadGameConfig();
+    void LoadGameConfig();
 private:
-
     bool m_running;
-    std::unique_ptr<GameStateManager> m_stateManager;
 };
 #endif

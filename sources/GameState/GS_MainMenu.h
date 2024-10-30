@@ -1,7 +1,6 @@
 #ifndef GS_MAINMENU
 #define GS_MAINMENU
 #include "GameState.h"
-#include <iostream>
 #include "GameStateType.h"
 class GS_MainMenu : public GameState
 {
@@ -15,5 +14,6 @@ public:
     void EndState() override ;
     void RenderState() override;
     void ProcessInputState() override;
+
 };
 #endif

@@ -18,9 +18,8 @@ public:
     virtual void UpdateState(float fElapsedTime);
     virtual void PauseState() = 0;
     virtual void EndState() = 0;
-    virtual void RenderState() = 0;
+    virtual void RenderState();
     virtual void ProcessInputState() = 0;
-
     inline uint16_t Id() const { return m_id;}
     std::size_t layers() const {return m_layers.size();}
 
@@ -28,7 +27,7 @@ public:
 
     void AddLayer(std::shared_ptr<GameStateLayer> layer);
 
-private:
+protected:
     std::vector<std::shared_ptr<GameStateLayer>> m_layers;
     GameStateType m_type;
     uint16_t m_id;

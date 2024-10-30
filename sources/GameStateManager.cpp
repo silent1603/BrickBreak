@@ -5,9 +5,9 @@ GameStateManager::GameStateManager() : m_currentState(nullptr)
 
 }
 
-GameStateManager::GameStateManager(uint16_t initStateSize) : m_gameStateStack(initStateSize)
+GameStateManager::GameStateManager(uint16_t initStateSize)
 {
-
+    m_gameStateStack.reserve(initStateSize);
 }
 
 GameStateManager::~GameStateManager()
@@ -31,9 +31,9 @@ void GameStateManager::ActiveState(uint16_t id)
 
 void GameStateManager::PushState(std::shared_ptr<GameState> state,bool active)
 {
-    if(m_gameStateStack.size() > 0)
+    if (m_gameStateStack.size() > 1)
     {
-        std::shared_ptr<GameState> state =  m_gameStateStack.back();
+        std::shared_ptr<GameState> state =  (*m_gameStateStack.rbegin());
         state->PauseState();
     }
 
@@ -52,15 +52,19 @@ void GameStateManager::PushState(std::shared_ptr<GameState> state,bool active)
 
 std::shared_ptr<GameState> GameStateManager::PopState()
 {
-    std::shared_ptr<GameState> state =  m_gameStateStack.back();
-    state->EndState();
-    m_gameStateStack.pop_back();
-    return state;
+    std::shared_ptr<GameState> state = nullptr;
+    if (m_gameStateStack.size() > 0)
+    {
+        std::shared_ptr<GameState> state = (*m_gameStateStack.rbegin());
+        state->EndState();
+        m_gameStateStack.pop_back();
+    }
+     return state;
 }
 
 std::shared_ptr<GameState> GameStateManager::PeekState()
 {
-    return m_gameStateStack.size() > 0 ? m_gameStateStack.back() : nullptr;
+    return m_gameStateStack.size() > 0 ? (*m_gameStateStack.rbegin()) : nullptr;
 }
 
 std::shared_ptr<GameState> GameStateManager::GetStatebById(uint16_t id)

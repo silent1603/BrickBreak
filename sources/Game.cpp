@@ -5,11 +5,10 @@
 #include "rapidjson/rapidjson.h"
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/document.h"
-#include "GlobalValriables.h"
+#include "GlobalVariables.h"
 Game::Game()
-    : m_running(false), m_stateManager(std::make_unique<GameStateManager>())
+    : m_running(false)
 {
-    std::cout << "Game created.\n";
 }
 
 Game::~Game()
@@ -19,11 +18,15 @@ Game::~Game()
 void Game::Init()
 {
     m_running = true;
-    gameConfigInfo = LoadGameConfig();
+    LoadGameConfig();
     InitWindow(gameConfigInfo.width,gameConfigInfo.height,gameConfigInfo.app_name.c_str());
-    SetTargetFPS(60); 
+    SetTargetFPS(60);
+    SetWindowTitle("brickbreak");
+    Image icon = LoadImage("resources/images/ground.png");
+    SetWindowIcon(icon); 
     std::shared_ptr<GameState> currentState = std::make_unique<GS_MainMenu>(0);
-    m_stateManager->PushState(currentState, true);
+    gameManagerInfo.stateManager = std::make_unique<GameStateManager>(4);
+    gameManagerInfo.stateManager->PushState(currentState, true);
 }
 
 void Game::CleanUp()
@@ -33,9 +36,9 @@ void Game::CleanUp()
 
 void Game::Update(float fElapsedTime)
 {
-    if (m_stateManager && m_stateManager->PeekState() != nullptr)
+    if (gameManagerInfo.stateManager->PeekState() != nullptr)
     {
-        m_stateManager->Update(fElapsedTime);
+        gameManagerInfo.stateManager->Update(fElapsedTime);
     }
 }
 
@@ -46,7 +49,7 @@ void Game::HandleEvents()
         Quit();
     }
 
-    if (auto state = m_stateManager->PeekState())
+    if (auto state = gameManagerInfo.stateManager->PeekState())
     {
         state->ProcessInputState();
     }
@@ -57,16 +60,16 @@ void Game::Draw()
 {
     BeginDrawing();
     ClearBackground(RAYWHITE);
-    if (auto state = m_stateManager->PeekState())
+    if (auto state = gameManagerInfo.stateManager->PeekState())
     {
         state->RenderState();
     }
     EndDrawing();
 }
 
-GameConfigInfo Game::LoadGameConfig()
+void Game::LoadGameConfig()
 {
-    GameConfigInfo config;
+    GameConfig config;
     
     config.asset_path = "resources";
     config.app_name = "Game Demo";
@@ -92,5 +95,5 @@ GameConfigInfo Game::LoadGameConfig()
       }
     }
     fclose(fp);
-    return config;
+    gameConfigInfo = config;
 }

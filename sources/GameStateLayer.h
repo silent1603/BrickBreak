@@ -12,7 +12,11 @@ public:
     inline uint16_t Id() const { return m_id;}
     inline bool IsEnable() const { return m_enabled;}
     inline bool SetEnable(bool enabled) { m_enabled = enabled;}
-    virtual bool update(float fElapsedTime) = 0;
+    
+    virtual bool Setup() = 0;
+    virtual bool Update(float fElapsedTime) = 0;
+    virtual bool Render() = 0;
+
 private:
     uint16_t m_id;
     bool m_enabled;
