@@ -167,7 +167,7 @@ endif()
 # Set common compiler flags
 # SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -Wswitch")
 # Set common compiler flags
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
 
 # Ensure that hot-reload is enabled for VS

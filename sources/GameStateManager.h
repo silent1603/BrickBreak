@@ -2,6 +2,7 @@
 #define GAMESTATEMANAGER
 #include <vector>
 #include <memory>
+#include <queue>
 #include "GameState.h"
 #include "GameStateType.h"
 
@@ -21,7 +22,7 @@ public:
     void ActiveState(uint16_t id);
     void PushState(std::shared_ptr<GameState> state);
     void Update(float fTimeElapsed);
-    
+    bool NeedUpdate();
     std::shared_ptr<GameState> PopState();
     std::shared_ptr<GameState> PeekState();
     std::shared_ptr<GameState> GetStatebById(uint16_t id);
@@ -29,6 +30,7 @@ public:
 
 private:
     std::vector<std::shared_ptr<GameState>> m_gameStateStack;
+    std::queue<std::shared_ptr<GameState>> m_gameStateQueue; 
     GameState* m_currentState;
 };
 #endif

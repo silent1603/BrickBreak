@@ -36,7 +36,7 @@ void Game::CleanUp()
 
 void Game::Update(float fElapsedTime)
 {
-    if (gameManagerInfo.stateManager->PeekState() != nullptr)
+    if (gameManagerInfo.stateManager->NeedUpdate())
     {
         gameManagerInfo.stateManager->Update(fElapsedTime);
     }

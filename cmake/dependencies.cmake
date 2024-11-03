@@ -133,32 +133,32 @@ add_git_dependency(
 FetchContent_GetProperties(${dep})
 # jolt physics
 
-set(DOUBLE_PRECISION OFF)
-set(GENERATE_DEBUG_SYMBOLS ON)
-set(CROSS_PLATFORM_DETERMINISTIC OFF)
-set(INTERPROCEDURAL_OPTIMIZATION ON)
-set(FLOATING_POINT_EXCEPTIONS_ENABLED OFF)
-set(OBJECT_LAYER_BITS 16)
-set(USE_SSE4_1 ON)
-set(USE_SSE4_2 ON)
-set(USE_AVX ON)
-set(USE_AVX2 ON)
-set(USE_AVX512 OFF)
-set(USE_LZCNT ON)
-set(USE_TZCNT ON)
-set(USE_F16C ON)
-set(USE_FMADD ON)
+# set(DOUBLE_PRECISION OFF)
+# set(GENERATE_DEBUG_SYMBOLS ON)
+# set(CROSS_PLATFORM_DETERMINISTIC OFF)
+# set(INTERPROCEDURAL_OPTIMIZATION ON)
+# set(FLOATING_POINT_EXCEPTIONS_ENABLED OFF)
+# set(OBJECT_LAYER_BITS 16)
+# set(USE_SSE4_1 ON)
+# set(USE_SSE4_2 ON)
+# set(USE_AVX ON)
+# set(USE_AVX2 ON)
+# set(USE_AVX512 OFF)
+# set(USE_LZCNT ON)
+# set(USE_TZCNT ON)
+# set(USE_F16C ON)
+# set(USE_FMADD ON)
 
 
-FetchContent_Declare(
-        JoltPhysics
-        GIT_REPOSITORY "https://github.com/jrouwe/JoltPhysics"
-        GIT_TAG "v5.0.0"
-        SOURCE_SUBDIR "Build"
-    )
-FetchContent_MakeAvailable(JoltPhysics)
+# FetchContent_Declare(
+#         JoltPhysics
+#         GIT_REPOSITORY "https://github.com/jrouwe/JoltPhysics"
+#         GIT_TAG "v5.0.0"
+#         SOURCE_SUBDIR "Build"
+#     )
+# FetchContent_MakeAvailable(JoltPhysics)
 
-set(CMAKE_EXE_LINKER_FLAGS_DISTRIBUTION "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
+# set(CMAKE_EXE_LINKER_FLAGS_DISTRIBUTION "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
     
-# add the dependency here to be linked
-list(APPEND LIBRARIES Jolt)
+# # add the dependency here to be linked
+# list(APPEND LIBRARIES Jolt)
