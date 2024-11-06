@@ -13,5 +13,11 @@ public:
     void EndState() override ;
     void RenderState() override;
     void ProcessInputState() override;
+private:
+    struct GameplayData
+    {
+        int score;
+        int playerHealth = 5;
+    }
 } ;
 #endif

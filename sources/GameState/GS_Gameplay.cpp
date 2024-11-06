@@ -1,5 +1,6 @@
 #include "GS_Gameplay.h"
-
+#include "GameLayer/GL_Entity_Gameplay.h"
+#include "GameLayer/HUD_GameplayLayer.h"
 GS_Gameplay::GS_Gameplay(uint16_t id)
     : GameState(id, GameStateType::GAME_PLAY)
 {
@@ -8,7 +9,7 @@ GS_Gameplay::GS_Gameplay(uint16_t id)
 
 void GS_Gameplay::StartState()
 {
-
+    std::shared_ptr<Hud
 }
 
 void GS_Gameplay::ResumeState()
